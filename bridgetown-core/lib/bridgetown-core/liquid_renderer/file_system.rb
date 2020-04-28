@@ -29,7 +29,26 @@ module Bridgetown
         raise Liquid::FileSystemError, "No such template '#{template_path}'" if found_paths.empty?
 
         # Last path in the list wins
-        ::File.read(found_paths.last)
+        filename = found_paths.last
+        file_content = ""
+
+        # Strip YAML header
+        if Utils.has_yaml_header?(filename)
+          begin
+            content = ::File.read(filename)
+            file_content = $POSTMATCH if content =~ Document::YAML_FRONT_MATTER_REGEXP
+          rescue Psych::SyntaxError => e
+            Bridgetown.logger.warn "YAML Exception reading #{filename}: #{e.message}"
+            raise e if site.config["strict_front_matter"]
+          rescue StandardError => e
+            Bridgetown.logger.warn "Error reading file #{filename}: #{e.message}"
+            raise e if site.config["strict_front_matter"]
+          end
+        else
+          file_content = ::File.read(filename)
+        end
+
+        file_content
       end
     end
   end

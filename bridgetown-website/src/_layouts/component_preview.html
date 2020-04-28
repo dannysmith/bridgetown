@@ -1,0 +1,41 @@
+---
+layout: default
+---
+
+<section class="container mt-12">
+  <div class="columns is-centered">
+    <div class="column is-three-quarters" id="swup">
+      <div class="box px-8 py-8">
+        <p class="has-text-right is-pulled-right mt-1 pl-5 pb-5"><a href="/components/" class="button is-info is-small">
+          <span class="icon" aria-hidden="true">
+            <i class="fa fa-chevron-up"></i>
+          </span>
+          <span>Components List</span>
+        </a></p>
+        <div class="is-clearfix is-hidden-tablet"></div>
+        <h1 class="mt-0 mb-10 title is-2 is-size-3-mobile has-text-left has-text-brown">{{ page.title }}</h1>
+
+        <div class="content">
+          <strong>Description:</strong>
+          {{ page.component.description | markdownify }}
+
+          {% if page.component.variables %}
+            <ul>
+              {% for variable in page.component.variables %}
+                <li>Variable {{ variable[0] }}: <strong>{{ variable[1] }}</strong></li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p>No variables defined.</p>
+          {% endif %}
+
+          <hr />
+
+          <div style="border: 1px solid #ccc; padding: 30px 50px">
+            {% component_previews %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

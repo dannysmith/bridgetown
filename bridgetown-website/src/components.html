@@ -1,0 +1,8 @@
+---
+layout: page
+title: Components
+---
+
+{% for component in site.data.components %}
+<li><a href="/components/{{ component[0] }}">{{ component[1].name }}</a></li>
+{% endfor %}
