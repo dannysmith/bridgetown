@@ -4,6 +4,20 @@ module Bridgetown
   class LiquidRenderer
     class FileSystem < Liquid::LocalFileSystem
       def read_template_file(template_path)
+        cache_key = "component:#{template_path}"
+        if Bridgetown.sites.first.liquid_renderer.cache[cache_key]
+          return Bridgetown.sites.first.liquid_renderer.cache[cache_key]
+        end
+
+        found_paths = find_template_locations(template_path)
+        raise Liquid::FileSystemError, "No such template '#{template_path}'" if found_paths.empty?
+
+        # Last path in the list wins
+        filename = found_paths.last
+        parse_liquid_component(cache_key, filename)
+      end
+
+      def find_template_locations(template_path)
         load_paths = root
         found_paths = []
 
@@ -24,12 +38,11 @@ module Bridgetown
         # Restore pristine state
         self.root = load_paths
 
-        found_paths.compact!
+        found_paths.compact
+      end
 
-        raise Liquid::FileSystemError, "No such template '#{template_path}'" if found_paths.empty?
-
-        # Last path in the list wins
-        filename = found_paths.last
+      # rubocop:disable Metrics/AbcSize
+      def parse_liquid_component(cache_key, filename)
         file_content = ""
 
         # Strip YAML header
@@ -48,8 +61,12 @@ module Bridgetown
           file_content = ::File.read(filename)
         end
 
+        # Cache for later use
+        Bridgetown.sites.first.liquid_renderer.cache[cache_key] = file_content
+
         file_content
       end
+      # rubocop:enable Metrics/AbcSize
     end
   end
 end
