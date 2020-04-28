@@ -1073,6 +1073,10 @@ class TestTags < BridgetownUnitTest
         assert_match "<span id=\"include-param\">value</span>", @result
         assert_match "<main>\n<ul>\n  <li>I am Markdown</li>\n</ul>\n</main>", @result
       end
+
+      should "not output Liquid Component front matter" do
+        refute_match "Test Component", @result
+      end
     end
   end
 end
