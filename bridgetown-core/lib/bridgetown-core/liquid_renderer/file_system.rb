@@ -4,10 +4,9 @@ module Bridgetown
   class LiquidRenderer
     class FileSystem < Liquid::LocalFileSystem
       def read_template_file(template_path)
+        @site = Bridgetown.sites.first
         cache_key = "component:#{template_path}"
-        if Bridgetown.sites.first.liquid_renderer.cache[cache_key]
-          return Bridgetown.sites.first.liquid_renderer.cache[cache_key]
-        end
+        return @site.liquid_renderer.cache[cache_key] if @site.liquid_renderer.cache[cache_key]
 
         found_paths = find_template_locations(template_path)
         raise Liquid::FileSystemError, "No such template '#{template_path}'" if found_paths.empty?
@@ -52,10 +51,10 @@ module Bridgetown
             file_content = $POSTMATCH if content =~ Document::YAML_FRONT_MATTER_REGEXP
           rescue Psych::SyntaxError => e
             Bridgetown.logger.warn "YAML Exception reading #{filename}: #{e.message}"
-            raise e if site.config["strict_front_matter"]
+            raise e if @site.config["strict_front_matter"]
           rescue StandardError => e
             Bridgetown.logger.warn "Error reading file #{filename}: #{e.message}"
-            raise e if site.config["strict_front_matter"]
+            raise e if @site.config["strict_front_matter"]
           end
         else
           file_content = ::File.read(filename)
