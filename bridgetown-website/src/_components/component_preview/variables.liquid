@@ -1,0 +1,32 @@
+{% if component.variables %}
+  <table class="settings biggest-output">
+    <thead>
+      <tr>
+        <th>Variable</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for variable in component.variables %}
+      {% assign variable_name = variable[0] %}
+      {% assign optional = "" %}
+      {% if variable_name contains "?" %}
+        {% assign variable_name = variable_name | replace: "?", "" %}
+        {% assign optional = ", optional" %}
+      {% endif %}
+      {% assign variable_info = variable[1] %}
+      {% if variable_info[1] %}
+        {% assign variable_info = variable_info[0] %}
+      {% endif %}
+        <tr>
+          <td><p><code>{{ variable_name }}</code></p></td>
+          <td><p>{{ variable_info }}{{ optional }}</p></td>
+          <td>{{ variable[1][1] | markdownify }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p><em>No variables defined.</em></p>
+{% endif %}

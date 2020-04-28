@@ -1,7 +1,25 @@
-{% rendercontent "docs/note", title: "This is a test" %}
-I am a note!
-{% endrendercontent %}
+<div class="content">
+  <h4>Note without Title:</h4>
 
-{% rendercontent "docs/note", title: "This is another test", type: "warning" %}
-I am also a note! :)
-{% endrendercontent %}
+  {% rendercontent "docs/note" %}
+  I am a note!
+  {% endrendercontent %}
+
+  <h4>Note with Title:</h4>
+
+  {% rendercontent "docs/note", title: "This is a test" %}
+  I am a note!
+  {% endrendercontent %}
+
+  <h4>Note with Title, Warning Type:</h4>
+
+  {% rendercontent "docs/note", title: "This is another test", type: "warning" %}
+  I am also a note! :)
+  {% endrendercontent %}
+
+  <h4>Note with Title & Extra Margin:</h4>
+
+  {% rendercontent "docs/note", title: "This is a test", extra_margin: true %}
+  I am a note!
+  {% endrendercontent %}
+</div>

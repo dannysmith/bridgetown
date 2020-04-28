@@ -2,38 +2,15 @@
 layout: default
 ---
 
-<section class="container mt-12">
-  <div class="columns is-centered">
-    <div class="column is-three-quarters" id="swup">
-      <div class="box px-8 py-8">
-        <p class="has-text-right is-pulled-right mt-1 pl-5 pb-5"><a href="/components/" class="button is-info is-small">
-          <span class="icon" aria-hidden="true">
-            <i class="fa fa-chevron-up"></i>
-          </span>
-          <span>Components List</span>
-        </a></p>
-        <div class="is-clearfix is-hidden-tablet"></div>
-        <h1 class="mt-0 mb-10 title is-2 is-size-3-mobile has-text-left has-text-brown">{{ page.title }}</h1>
+{% rendercontent "shared/page_layout" %}
+  {% rendercontent "shared/box" %}
+    {% render "shared/back_to_button", label: "Components List", url: "/components/" %}
+    {% render "shared/header_subpage", title: page.title %}
 
-        <div class="content">
-          <strong>Description:</strong>
-          {{ page.component.description | markdownify }}
-
-          {% if page.component.variables %}
-            <ul>
-              {% for variable in page.component.variables %}
-                <li>Variable {{ variable[0] }}: <strong>{{ variable[1] }}</strong></li>
-              {% endfor %}
-            </ul>
-          {% else %}
-            <p>No variables defined.</p>
-          {% endif %}
-        </div>
-      </div>
-
-      <div style="border: 2px dashed #ccc; padding: 30px 50px">
-        {% component_previews %}
-      </div>
+    <div class="content">
+      {% render "component_preview/metadata", component: page.component %}
+      {% render "component_preview/variables", component: page.component %}
     </div>
-  </div>
-</section>
+  {% endrendercontent %}
+  {% render "component_preview/preview_area", page: page %}
+{% endrendercontent %}
