@@ -42,28 +42,25 @@ module Bridgetown
 
       # rubocop:disable Metrics/AbcSize
       def parse_liquid_component(cache_key, filename)
-        file_content = ""
+        template = ""
 
         # Strip YAML header
         if Utils.has_yaml_header?(filename)
           begin
-            content = ::File.read(filename)
-            file_content = $POSTMATCH if content =~ Document::YAML_FRONT_MATTER_REGEXP
-          rescue Psych::SyntaxError => e
-            Bridgetown.logger.warn "YAML Exception reading #{filename}: #{e.message}"
-            raise e if @site.config["strict_front_matter"]
+            markup = ::File.read(filename)
+            template = $POSTMATCH if markup =~ Document::YAML_FRONT_MATTER_REGEXP
           rescue StandardError => e
             Bridgetown.logger.warn "Error reading file #{filename}: #{e.message}"
             raise e if @site.config["strict_front_matter"]
           end
         else
-          file_content = ::File.read(filename)
+          template = ::File.read(filename)
         end
 
         # Cache for later use
-        Bridgetown.sites.first.liquid_renderer.cache[cache_key] = file_content
+        Bridgetown.sites.first.liquid_renderer.cache[cache_key] = template
 
-        file_content
+        template
       end
       # rubocop:enable Metrics/AbcSize
     end
