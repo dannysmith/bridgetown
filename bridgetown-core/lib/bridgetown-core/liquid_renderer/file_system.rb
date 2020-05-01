@@ -40,7 +40,6 @@ module Bridgetown
         found_paths.compact
       end
 
-      # rubocop:disable Metrics/AbcSize
       def parse_liquid_component(cache_key, filename)
         template = ""
 
@@ -62,7 +61,6 @@ module Bridgetown
 
         template
       end
-      # rubocop:enable Metrics/AbcSize
     end
   end
 end
