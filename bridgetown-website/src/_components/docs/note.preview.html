@@ -17,9 +17,11 @@
   I am also a note! :)
   {% endrendercontent %}
 
-  <h4>Note with Title & Extra Margin:</h4>
+  <h4>Note with Markdown Title & Extra Margin:</h4>
 
-  {% rendercontent "docs/note", title: "This is a test", extra_margin: true %}
-  I am a note!
+  {% rendercontent "docs/note", extra_margin: true %}
+    {% contentarea title %}This is a test (_with_ ~~feeling~~ formatting){% endcontentarea %}
+
+    I am a note!
   {% endrendercontent %}
 </div>

@@ -3,27 +3,36 @@
 module Bridgetown
   module Tags
     class BlockRenderTag < Liquid::Block
-      def initialize(tag_name, markup, options)
-        super
+      def render(context)
+        context.stack({}) do
+          content = super.gsub(%r!^[ \t]+!, "") # unindent the incoming text
+          areas = gather_content_areas(context)
 
-        @tag = tag_name
-        @markup = markup
-        @options = options
+          site = context.registers[:site]
+          converter = site.find_converter_instance(Bridgetown::Converters::Markdown)
+          markdownified_content = converter.convert(content)
+          context["componentcontent"] = markdownified_content
+
+          render_params = [@markup, "content: componentcontent"]
+          unless areas.empty?
+            areas.each do |area_name, area_content|
+              area_name = area_name.sub("content_area_", "")
+              context[area_name] = converter.convert(area_content.gsub(%r!^[ \t]+!, ""))
+              render_params.push "#{area_name}: #{area_name}"
+            end
+          end
+
+          Liquid::Render.parse("render", render_params.join(","), nil, @parse_context)
+            .render_tag(context, +"")
+        end
       end
 
-      def render(context)
-        content = super.gsub(%r!^[ \t]+!, "") # unindent the incoming text
+      private
 
-        site = context.registers[:site]
-        converter = site.find_converter_instance(Bridgetown::Converters::Markdown)
-        markdownified_content = converter.convert(content)
+      def gather_content_areas(context)
+        return {} unless context.scopes[0].keys.find { |k| k.to_s.start_with? "content_area_" }
 
-        context.stack do
-          context["componentcontent"] = markdownified_content
-          render_params = "#{@markup}, content: componentcontent"
-          render_tag = Liquid::Render.parse("render", render_params, @options, @parse_context)
-          render_tag.render_tag(context, +"")
-        end
+        context.scopes[0].select { |k| k.to_s.start_with? "content_area_" }
       end
     end
   end
