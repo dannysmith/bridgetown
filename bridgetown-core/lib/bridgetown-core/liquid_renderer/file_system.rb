@@ -3,6 +3,8 @@
 module Bridgetown
   class LiquidRenderer
     class FileSystem < Liquid::LocalFileSystem
+      # TODO: investigate Liquid's internal context.registers[:cached_partials]
+      # mechanism…maybe we don't need to cache ourselves
       def read_template_file(template_path)
         @site = Bridgetown.sites.first
         cache_key = "component:#{template_path}"
